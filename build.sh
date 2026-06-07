@@ -1,13 +1,10 @@
 #!/bin/bash
 
 echo "===================================="
-echo "🧹 CLEANING CONFLICTING CACHES..."
+echo "🧹 CLEANING CRAVE CACHES..."
 echo "===================================="
-# Удаляем манифесты, чтобы repo качал ТОЛЬКО саму прошивку
+# Удаляем манифесты, чтобы repo качал ТОЛЬКО чистую прошивку
 rm -rf .repo/local_manifests
-# Удаляем сломанные кэши qcom, на которые ругался сервер
-rm -rf hardware/qcom-caf/sm8250/audio hardware/qcom-caf/sm8250/display
-rm -rf .repo/projects/hardware/qcom-caf/sm8250/audio.git .repo/projects/hardware/qcom-caf/sm8250/display.git
 
 echo "===================================="
 echo "🚀 INIT EVOLUTION-X (bq2)..."
@@ -22,7 +19,7 @@ echo "===================================="
 echo "===================================="
 echo "📥 CLONING DEVICE TREES MANUALLY..."
 echo "===================================="
-# Удаляем папки на всякий случай и качаем всё вручную через git clone
+# Принудительно удаляем папки, чтобы git clone сработал в чистом поле
 rm -rf device/xiaomi/spes vendor/xiaomi/spes kernel/xiaomi/sm6225 hardware/xiaomi hardware/samsung-ext/interfaces
 
 git clone https://github.com/Evolution-X-Devices/device_xiaomi_spes.git -b bka device/xiaomi/spes
@@ -36,7 +33,8 @@ echo "⚙️ STARTING BUILD..."
 echo "===================================="
 export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
-# ЖЕСТКО ОТКЛЮЧАЕМ ROOMSERVICE, чтобы он не сломал наши папки!
+
+# ЖЕСТКО ОТКЛЮЧАЕМ ROOMSERVICE!
 export ROOMSERVICE_DISABLED=true
 export DISABLE_ROOMSERVICE=true
 
