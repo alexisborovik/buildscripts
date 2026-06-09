@@ -59,6 +59,6 @@ export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
-lunch evolution_spes-userdebug
+lunch lineage_spes-userdebug
 make installclean
 mka evolution
