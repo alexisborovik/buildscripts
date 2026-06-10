@@ -5,7 +5,7 @@ echo "===================================="
 echo "🧹 CLEANING WORKSPACE..."
 echo "===================================="
 rm -rf .repo/local_manifests
-rm -rf device/xiaomi vendor/xiaomi kernel/xiaomi hardware/xiaomi hardware/samsung-ext hardware/lineage
+rm -rf device/xiaomi vendor/xiaomi kernel/xiaomi hardware/xiaomi hardware/samsung-ext hardware/lineage/compat
 
 echo "===================================="
 echo "🚀 INIT EVOLUTION-X (bq2)..."
@@ -19,18 +19,13 @@ mkdir -p .repo/local_manifests
 cat <<EOF > .repo/local_manifests/spes.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <!-- Основные деревья устройства -->
   <project path="device/xiaomi/spes" name="Evolution-X-Devices/device_xiaomi_spes" remote="github" revision="bka" />
   <project path="device/xiaomi/sm6225-common" name="Evolution-X-Devices/device_xiaomi_sm6225-common" remote="github" revision="bka" />
   <project path="vendor/xiaomi/spes" name="Evolution-X-Devices/vendor_xiaomi_spes" remote="github" revision="bka" />
   <project path="vendor/xiaomi/sm6225-common" name="Evolution-X-Devices/vendor_xiaomi_sm6225-common" remote="github" revision="bka" />
   <project path="kernel/xiaomi/sm6225" name="Evolution-X-Devices/kernel_xiaomi_sm6225" remote="github" revision="bka" />
-
-  <!-- Зависимости железа -->
   <project path="hardware/xiaomi" name="LineageOS/android_hardware_xiaomi" remote="github" revision="lineage-23.2" />
   <project path="hardware/samsung-ext/interfaces" name="Roynas-Android-Playground/hardware_samsung-extra_interfaces" remote="github" revision="lineage-23.2" />
-
-  <!-- Та самая папка, которую требует vendorsetup.sh мейнтейнера -->
   <project path="hardware/lineage/compat" name="LineageOS/android_hardware_lineage_compat" remote="github" revision="lineage-23.2" />
 </manifest>
 EOF
@@ -38,7 +33,6 @@ EOF
 echo "===================================="
 echo "💥 NUKING CRAVE CACHE BUGS..."
 echo "===================================="
-# Удаляем кэши Crave, чтобы repo скачал всё с нуля и не оставил папки пустыми
 rm -rf .repo/project-objects/Evolution-X-Devices
 rm -rf .repo/project-objects/LineageOS/android_hardware_xiaomi.git
 rm -rf .repo/project-objects/LineageOS/android_hardware_lineage_compat.git
@@ -50,12 +44,28 @@ echo "===================================="
 /opt/crave/resync.sh
 
 echo "===================================="
+echo "🩹 FIXING WINDOWS CRLF BUGS..."
+echo "===================================="
+find device/xiaomi -type f -name "*.mk" -exec sed -i 's/\r$//' {} + || true
+find device/xiaomi -type f -name "*.bp" -exec sed -i 's/\r$//' {} + || true
+find device/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
+
+echo "===================================="
+echo "☠️ PHYSICALLY KILLING ROOMSERVICE..."
+echo "===================================="
+# Удаляем списки зависимостей. Теперь Roomservice ничего не найдет и не создаст дубликатов!
+rm -f device/xiaomi/spes/evolution.dependencies
+rm -f device/xiaomi/sm6225-common/evolution.dependencies
+rm -f device/xiaomi/spes/lineage.dependencies
+rm -f device/xiaomi/sm6225-common/lineage.dependencies
+
+echo "===================================="
 echo "⚙️ STARTING BUILD..."
 echo "===================================="
 export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
-lunch lineage_spes-userdebug
+lunch evolution_spes-userdebug
 make installclean
 mka evolution
