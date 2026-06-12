@@ -53,11 +53,9 @@ find device/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
 echo "===================================="
 echo "☠️ PHYSICALLY KILLING ROOMSERVICE..."
 echo "===================================="
-# Удаляем списки зависимостей. Теперь Roomservice ничего не найдет и не создаст дубликатов!
+# Удаляем файлы зависимостей. Теперь Roomservice слеп и не выдаст ошибку дубликата!
 rm -f device/xiaomi/spes/evolution.dependencies
 rm -f device/xiaomi/sm6225-common/evolution.dependencies
-rm -f device/xiaomi/spes/lineage.dependencies
-rm -f device/xiaomi/sm6225-common/lineage.dependencies
 
 echo "===================================="
 echo "⚙️ STARTING BUILD..."
@@ -66,6 +64,7 @@ export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
-lunch lineage_spes-userdebug
+# ВОЗВРАЩАЕМ ПРАВИЛЬНОЕ ИМЯ!
+lunch evolution_spes-userdebug
 make installclean
 mka evolution
