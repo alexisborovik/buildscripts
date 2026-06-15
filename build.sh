@@ -26,7 +26,7 @@ cat <<EOF > .repo/local_manifests/spes.xml
   <project path="kernel/xiaomi/sm6225" name="Evolution-X-Devices/kernel_xiaomi_sm6225" remote="github" revision="bka" />
   <project path="hardware/xiaomi" name="LineageOS/android_hardware_xiaomi" remote="github" revision="lineage-23.2" />
   <project path="hardware/samsung-ext/interfaces" name="Roynas-Android-Playground/hardware_samsung-extra_interfaces" remote="github" revision="lineage-23.2" />
-  <project path="hardware/lineage/compat" name="LineageOS/android_hardware_lineage_compat" remote="github" revision="lineage-23.2" />
+  <!-- МЫ УБРАЛИ COMPAT, ТАК КАК ОН УЖЕ ЕСТЬ В БАЗЕ EVOLUTION X -->
 </manifest>
 EOF
 
@@ -35,12 +35,12 @@ echo "💥 NUKING CRAVE CACHE BUGS..."
 echo "===================================="
 rm -rf .repo/project-objects/Evolution-X-Devices
 rm -rf .repo/project-objects/LineageOS/android_hardware_xiaomi.git
-rm -rf .repo/project-objects/LineageOS/android_hardware_lineage_compat.git
 rm -rf .repo/project-objects/Roynas-Android-Playground
 
 echo "===================================="
 echo "🔄 SYNCING EVERYTHING VIA REPO..."
 echo "===================================="
+# Теперь repo не найдет дубликатов и скачает папку устройства на 100%!
 /opt/crave/resync.sh
 
 echo "===================================="
@@ -65,7 +65,7 @@ export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
-# ИСПОЛЬЗУЕМ ТОЧНОЕ ИМЯ ФАЙЛА С GITHUB!
-lunch lineage_spes-userdebug
+# ВОЗВРАЩАЕМ ПРАВИЛЬНОЕ ИМЯ! Теперь папка полная, и он его найдет!
+lunch evolution_spes-userdebug
 make installclean
 mka evolution
