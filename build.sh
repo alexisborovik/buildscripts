@@ -66,6 +66,6 @@ export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
 # ВОЗВРАЩАЕМ ПРАВИЛЬНОЕ ИМЯ! Теперь папка полная, и он его найдет!
-lunch evolution_spes-userdebug
+lunch lineage_spes-userdebug
 make installclean
 mka evolution
