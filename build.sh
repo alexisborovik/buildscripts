@@ -1,9 +1,15 @@
 echo "===================================="
-echo "🩹 FIXING WINDOWS CRLF BUGS..."
+echo "🔄 SYNCING EVERYTHING VIA REPO..."
 echo "===================================="
-find device/xiaomi -type f -name "*.mk" -exec sed -i 's/\r$//' {} + || true
-find device/xiaomi -type f -name "*.bp" -exec sed -i 's/\r$//' {} + || true
-find device/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
+/opt/crave/resync.sh
+
+echo "===================================="
+echo "🩹 FIXING WINDOWS CRLF BUGS EVERYWHERE..."
+echo "===================================="
+# Теперь мы лечим от виндовских символов ВСЕ скачанные папки!
+find device/xiaomi hardware/xiaomi vendor/xiaomi -type f -name "*.mk" -exec sed -i 's/\r$//' {} + || true
+find device/xiaomi hardware/xiaomi vendor/xiaomi -type f -name "*.bp" -exec sed -i 's/\r$//' {} + || true
+find device/xiaomi hardware/xiaomi vendor/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
 
 echo "===================================="
 echo "☠️ PHYSICALLY KILLING ROOMSERVICE..."
@@ -16,7 +22,6 @@ rm -f device/xiaomi/sm6225-common/lineage.dependencies
 echo "===================================="
 echo "🔑 FIXING PRIVATE KEYS ISSUE..."
 echo "===================================="
-# Превращаем жесткое требование ключей в мягкое (игнорируем их отсутствие)
 sed -i 's/include vendor\/evolution-priv/-include vendor\/evolution-priv/g' vendor/lineage/config/evolution.mk || true
 
 echo "===================================="
