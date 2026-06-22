@@ -5,7 +5,7 @@ echo "===================================="
 echo "🧹 CLEANING WORKSPACE..."
 echo "===================================="
 rm -rf .repo/local_manifests
-rm -rf device/xiaomi vendor/xiaomi kernel/xiaomi hardware/xiaomi hardware/samsung-ext hardware/lineage/compat
+rm -rf device/xiaomi vendor/xiaomi kernel/xiaomi hardware/xiaomi hardware/samsung-ext
 
 echo "===================================="
 echo "🚀 INIT EVOLUTION-X (bq2)..."
@@ -42,24 +42,19 @@ echo "===================================="
 /opt/crave/resync.sh
 
 echo "===================================="
-echo "📥 FIXING MISSING COMPAT FOLDER..."
+echo "🩹 FIXING MAINTAINER'S BUGS..."
 echo "===================================="
-# Качаем вручную, чтобы не было ошибки "duplicate path" в манифесте
-git clone https://github.com/LineageOS/android_hardware_lineage_compat.git -b lineage-23.2 hardware/lineage/compat
-
-echo "===================================="
-echo "🩹 FIXING WINDOWS CRLF BUGS..."
-echo "===================================="
+# 1. Лечим виндовские символы
 find device/xiaomi -type f -name "*.mk" -exec sed -i 's/\r$//' {} + || true
 find device/xiaomi -type f -name "*.bp" -exec sed -i 's/\r$//' {} + || true
 find device/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
-# ЛЕЧИМ ФАЙЛ ПРОШИВКИ ОТ ОШИБКИ "MISSING SEPARATOR"!
-sed -i 's/\r$//' vendor/lineage/config/evolution.mk || true
+
+# 2. ВЫРЕЗАЕМ СЛОМАННУЮ СТРОЧКУ ИЗ VENDORSETUP.SH!
+sed -i '/hardware\/lineage\/compat\/Android.bp/d' device/xiaomi/spes/vendorsetup.sh || true
 
 echo "===================================="
 echo "🔑 FAKING PRIVATE KEYS..."
 echo "===================================="
-# Создаем пустые ключи, чтобы система не падала
 mkdir -p vendor/evolution-priv/keys
 touch vendor/evolution-priv/keys/keys.mk
 
@@ -78,7 +73,6 @@ export BUILD_USERNAME=Alexis
 export BUILD_HOSTNAME=CraveCloud
 
 source build/envsetup.sh
-# ТОЛЬКО ЭТО ИМЯ ПРАВИЛЬНОЕ!
 lunch lineage_spes-userdebug
 make installclean
 mka evolution
