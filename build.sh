@@ -4,12 +4,17 @@ set -e
 echo "===================================="
 echo "🧹 CLEANING WORKSPACE..."
 echo "===================================="
+# УДАЛЯЕМ КЭШ МАНИФЕСТОВ (КАК В РАБОЧЕМ СКРИПТЕ!)
 rm -rf .repo/local_manifests
+rm -rf .repo/manifests
+rm -rf .repo/manifest.xml
+# Удаляем старые папки
 rm -rf device/xiaomi vendor/xiaomi kernel/xiaomi hardware/xiaomi hardware/samsung-ext
 
 echo "===================================="
 echo "🚀 INIT EVOLUTION-X (bq2)..."
 echo "===================================="
+# Теперь он скачает манифест с нуля, без конфликтов!
 repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
 
 echo "===================================="
@@ -44,12 +49,10 @@ echo "===================================="
 echo "===================================="
 echo "🩹 FIXING MAINTAINER'S BUGS..."
 echo "===================================="
-# 1. Лечим виндовские символы
 find device/xiaomi -type f -name "*.mk" -exec sed -i 's/\r$//' {} + || true
 find device/xiaomi -type f -name "*.bp" -exec sed -i 's/\r$//' {} + || true
 find device/xiaomi -type f -name "*.sh" -exec sed -i 's/\r$//' {} + || true
-
-# 2. ВЫРЕЗАЕМ СЛОМАННУЮ СТРОЧКУ ИЗ VENDORSETUP.SH!
+# Вырезаем сломанную строчку, чтобы не качать лишние папки
 sed -i '/hardware\/lineage\/compat\/Android.bp/d' device/xiaomi/spes/vendorsetup.sh || true
 
 echo "===================================="
